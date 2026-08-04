@@ -2,6 +2,42 @@
 
 一套精简、注重成本控制的功能开发 skill 流水线,改编自 [mattpocock/skills](https://github.com/mattpocock/skills)。本地优先:不依赖 issue tracker、无需 setup 初始化、所有约定固化在 skill 内。
 
+## 运行时兼容
+
+本流水线同时支持 Kimi Code 和 OpenCode。`simp-implement` 的工作流保持不变,只有 secondary agent 的调用语法不同:
+
+| 运行时 | 调用方式 | 目标 | 配置方式 |
+|---|---|---|---|
+| Kimi Code | `Agent` | `subagent_type="coder"` | 执行 `/secondary_model` |
+| OpenCode | `Task` | `subagent_type="secondary"` | 配置 `secondary` agent |
+
+Kimi Code:
+
+```text
+Agent(subagent_type="coder", model="secondary")
+```
+
+OpenCode:
+
+```text
+Task(subagent_type="secondary")
+```
+
+在 OpenCode 中,`secondary` 是 agent 名称,不是模型 ID。需要在 agent 配置中指定模型。全局配置放在
+`~/.config/opencode/agents/secondary.md`,项目级配置放在
+`.opencode/agents/secondary.md`:
+
+```markdown
+---
+description: Implements planned tickets and runs the relevant checks.
+mode: subagent
+model: opencode-go/deepseek-v4-flash
+---
+
+Implement the task described by the parent agent. Read the referenced ticket
+and dev doc first, make the required changes, and run the relevant checks.
+```
+
 ## 流水线
 
 ```

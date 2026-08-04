@@ -56,7 +56,12 @@ Keep it decision-rich and short. This doc is the developer's entire context pack
 
 ### 2. Implement (secondary)
 
-Spawn ONE `Agent` call with `subagent_type="coder"` and `model="secondary"`. The prompt must include:
+Dispatch exactly ONE secondary developer call using the syntax supported by the host:
+
+- **Kimi Code**: spawn one `Agent` call with `subagent_type="coder"` and `model="secondary"`.
+- **OpenCode**: spawn one `Task` call with `subagent_type="secondary"`. Do not pass `model="secondary"`: `secondary` is the OpenCode agent name, and its model is configured by the agent (for example, `opencode-go/deepseek-v4-flash`).
+
+The prompt must include:
 
 - The dev doc path and the ticket path — tell it to read both in full before touching code.
 - The brief: "Implement exactly the plan in the dev doc — no more, no less. Stay out of the out-of-scope list. Run typechecking and the relevant tests as you go; fix what you break. If the plan turns out to be wrong or unimplementable, STOP and report why instead of improvising a different design."
