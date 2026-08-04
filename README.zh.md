@@ -64,6 +64,7 @@ and dev doc first, make the required changes, and run the relevant checks.
 ## 核心规则
 
 - **大改小改由调用入口决定,不靠模型判断。** 需要持久 PRD 就用 `/simp-to-spec --docs`;不需要就用 `/simp-to-spec`,在会话内直接开发。
+- **落盘 PRD 必须经过确认。** 如果 `simp-grill` 认为应该生成持久 PRD,必须先说明理由并请求用户明确确认;未确认时使用不带 `--docs` 的 `/simp-to-spec`。
 - **ADR 三条标准缺一不可**:难以逆转、没有上下文会令人费解、存在真实的取舍。否则不记。
 - **PRD 是活文档。** 任何与 PRD 描述行为相悖的改动,都要在同一 commit 内修正受影响段落——包括那些没走 `--docs` 的小改动。
 - **ticket 是脚手架。** 永不入库;PRD 中用一行记录该 feature 拆分成了哪些 ticket,足够追溯。

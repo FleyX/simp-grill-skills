@@ -48,4 +48,4 @@ If any of the three is missing, skip the ADR. ADRs are **snapshots**: never edit
 
 ## Next step
 
-When the interview converges, continue in the **same context window** with `/simp-to-spec` — add `--docs` if this is a feature worth a durable PRD.
+When the interview converges, continue in the **same context window** with `/simp-to-spec`. Do not automatically choose `--docs`. If you think the feature would benefit from a durable PRD, explain why and ask the user for explicit confirmation first. Invoke `/simp-to-spec --docs` only after the user confirms; otherwise use `/simp-to-spec` without `--docs`.

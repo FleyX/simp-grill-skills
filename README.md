@@ -69,6 +69,7 @@ Run `simp-grill` → `simp-to-spec` → `simp-to-tickets` in **one unbroken cont
 ## Rules worth knowing
 
 - **Big vs small is chosen by invocation, not by judgement.** Want a durable PRD? Say `/simp-to-spec --docs`. Don't? Say `/simp-to-spec` and build in-session.
+- **PRD persistence requires confirmation.** If `simp-grill` thinks a durable PRD would help, it must explain why and ask the user before invoking `/simp-to-spec --docs`; without confirmation, use `/simp-to-spec` without `--docs`.
 - **ADRs need all three**: hard to reverse, surprising without context, a real trade-off. Otherwise skip.
 - **PRDs are living documents.** Any change that contradicts a PRD's described behaviour amends the affected sections in the same commit — including small fixes that never got their own PRD.
 - **Tickets are scaffolding.** They are never committed; the PRD records which tickets a feature was split into (one line).
