@@ -6,11 +6,13 @@ disable-model-invocation: true
 
 # Simp Grill
 
-Interview the user relentlessly about every aspect of the requirement until you reach a shared understanding. Walk down each branch of the decision tree, resolving dependencies between decisions one by one. For each question, provide your recommended answer.
+Interview the user relentlessly about every aspect of the requirement until you reach a shared understanding. Map the requirement as a decision tree and walk down every branch, resolving dependencies between decisions in order. For each question, provide your recommended answer.
 
-Ask questions **one at a time**, waiting for feedback on each before continuing. Asking multiple questions at once is bewildering.
+Work through the decision tree in **rounds**. The frontier is every decision whose prerequisites are already settled. Ask the whole current frontier in one round, numbering each question and giving your recommended answer for each. Do not ask a question whose answer depends on another question that is still open in the current round; ask it in a later round after recomputing the frontier from the user's answers. Wait for the user's answers to the current round before continuing.
 
 If a *fact* can be found by exploring the environment (filesystem, code, tools), look it up rather than asking. The *decisions*, though, belong to the user — put each one to them and wait for the answer.
+
+Keep questions at the requirement and domain level. Do not proactively ask for implementation details such as field names, index names, file paths, class names, function names, or routine technology choices. Ask about an implementation detail only when it changes externally observable behaviour, an external contract, data compatibility, or a hard-to-reverse decision.
 
 Do not act on the requirement until the user confirms shared understanding.
 
