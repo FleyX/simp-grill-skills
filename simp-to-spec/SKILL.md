@@ -1,6 +1,6 @@
 ---
 name: simp-to-spec
-description: "Synthesise the current conversation into a spec. With --docs, also persist it as a living PRD under docs/prd/ and maintain the PRD index. No interview — just synthesis of what was already discussed."
+description: "Synthesise the current conversation into a spec. With --docs, also persist it as a snapshot PRD under docs/prd/ and maintain the PRD index. No interview — just synthesis of what was already discussed."
 disable-model-invocation: true
 ---
 
@@ -19,7 +19,7 @@ Run this in the **same unbroken context window** as the preceding `/simp-grill` 
 
 ### 1. Ground yourself
 
-Explore the repo to understand the current state of the code, if you haven't already. Read `CONTEXT.md` (if it exists) and use its vocabulary throughout the spec. Respect any ADRs in `docs/adr/` in the area you're touching.
+Explore the repo to understand the current state of the code, if you haven't already. Read `CONTEXT.md` (if it exists) and use its vocabulary throughout the spec. Respect any ADRs in `docs/adr/` in the area you're touching. When consulting existing PRDs, check the index for `superseded by` markers — superseded sections no longer describe current behaviour.
 
 ### 2. Agree the test seams
 
@@ -70,8 +70,8 @@ Anything else worth recording.
 ### 4. With `--docs`: persist the PRD
 
 - Write the spec to `docs/prd/<feature-slug>.md`.
-- Update the index at `docs/prd/README.md` — one line per PRD: `<feature-slug>` → the modules/areas it covers, linked. Create the index if missing. The index exists so future work can find relevant PRDs **without reading them all**; keep lines short.
-- **Amend affected historical PRDs.** Use the index to find existing PRDs whose described behaviour this feature changes. Update only the affected sections so each PRD describes current behaviour — never rewrite whole documents. Note at the end of the new PRD which sections of which historical PRDs it amends.
+- Update the index at `docs/prd/README.md` — one line per PRD: `<feature-slug>` → the modules/areas it covers, linked. Create the index if missing. The index exists so future work can find relevant PRDs **without reading them all**; keep lines short. When the new PRD supersedes an older one (next bullet), mark the older line: append `→ superseded by <new-slug>`, or `→ partially superseded by <new-slug>` when only some sections are replaced.
+- **Declare supersedes — never amend historical PRDs.** PRDs are snapshots: once written, a PRD is never edited. Use the index to find existing PRDs whose described behaviour this feature changes, and note at the end of the new PRD which sections of which historical PRDs it supersedes. Sections not mentioned remain in effect.
 - **ADR check.** If the conversation settled a decision that is hard to reverse, surprising without context, and the result of a real trade-off, record it as a new ADR per the `/simp-grill` ADR rules, and reference it from the spec's Implementation Decisions.
 
 ### 5. Continue
