@@ -49,7 +49,7 @@ and dev doc first, make the required changes, and run the relevant checks.
 /simp-grill            interview the requirement; maintain CONTEXT.md + ADRs
 /simp-to-spec [--docs] synthesise the conversation into a spec
                        (--docs persists it as a snapshot PRD under docs/prd/)
-/simp-to-tickets       split into tracer-bullet tickets under .scratch/
+/simp-to-tickets       split into tracer-bullet tickets under .scratch/; commit the spec artifacts (CONTEXT.md, ADRs, PRDs)
 /simp-implement        per ticket: primary plans → secondary builds → primary reviews
 /simp-code-review      standalone two-axis review, invoked manually only
 ```
@@ -71,9 +71,9 @@ Run `simp-grill` → `simp-to-spec` → `simp-to-tickets` in **one unbroken cont
 - **Big vs small is chosen by invocation, not by judgement.** Want a durable PRD? Say `/simp-to-spec --docs`. Don't? Say `/simp-to-spec` and build in-session.
 - **PRD persistence requires confirmation.** If `simp-grill` thinks a durable PRD would help, it must explain why and ask the user before invoking `/simp-to-spec --docs`; without confirmation, use `/simp-to-spec` without `--docs`.
 - **ADRs need all three**: hard to reverse, surprising without context, a real trade-off. Otherwise skip.
-- **PRDs are snapshots.** Once written, a PRD is never edited. New features declare supersedes in their own PRD; code changes that contradict a PRD mark its index line `→ partially stale` in the same commit — including small fixes that never got their own PRD.
-- **Tickets are scaffolding.** They are never committed; the PRD's index line records which tickets a feature was split into — enough for traceability.
-- **Two levels of review.** `simp-implement` does a lightweight per-ticket review (diff vs acceptance criteria, PRD staleness marking). `simp-code-review` is the heavy two-axis review — run it manually when it's worth the cost, typically at feature end.
+- **PRDs are snapshots.** Once written, a PRD is never edited. New features declare supersedes in their own PRD. Code changes never touch `docs/prd/` — deviations from historical PRDs are expected and get superseded by the next PRD covering the area.
+- **Tickets are scaffolding.** They are never committed; the durable record of intent is the PRD.
+- **Two levels of review.** `simp-implement` does a lightweight per-ticket review (diff vs acceptance criteria, PRD fidelity). `simp-code-review` is the heavy two-axis review — run it manually when it's worth the cost, typically at feature end.
 - **Implementation runs on the secondary model.** The primary writes the dev doc and reviews; the secondary reads code, edits, and runs tests.
 
 ## Installation

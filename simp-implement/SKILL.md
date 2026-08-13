@@ -36,11 +36,11 @@ The modules, seams, and domain vocabulary involved (use `CONTEXT.md` terms). Nam
 
 ## PRD impact
 
-Which sections of which PRDs under `docs/prd/` this change contradicts or updates — or "None". Check the index at `docs/prd/README.md`.
+Which sections of which PRDs under `docs/prd/` this change contradicts — or "None". Check the index at `docs/prd/README.md`. Informational only: simp-implement never writes to `docs/prd/` — supersede declarations belong to simp-to-spec.
 
 ## Implementation plan
 
-Numbered steps. Each step: what to change, in which module, and why. Include interface shapes (signatures, schema, type shapes) where prose would be ambiguous. If PRD impact is not "None", include a step to append `→ partially stale: <sections>` to each affected PRD's line in the index (`docs/prd/README.md`) — it lands in the SAME commit as the code. Never edit the PRD itself.
+Numbered steps. Each step: what to change, in which module, and why. Include interface shapes (signatures, schema, type shapes) where prose would be ambiguous.
 
 ## Verification
 
@@ -74,7 +74,7 @@ Review the result yourself — lightweight and per-ticket. The heavy two-axis re
 1. `git diff` the ticket's changes and read the diff in full.
 2. Check each acceptance criterion against the diff — every one must be demonstrably satisfied.
 3. Check for scope creep: anything in the diff the dev doc didn't ask for.
-4. **PRD sync**: if the dev doc declared PRD impact, confirm the affected index lines were marked `→ partially stale` in the same change. If impact was declared "None" but the diff contradicts a PRD's described behaviour, mark that PRD's index line now, in the same commit. Never edit historical PRDs.
+4. **PRD fidelity**: if the diff contradicts the current feature's own PRD, flag it to the user before committing. Contradictions with historical PRDs are expected — they were declared as supersedes by the feature's PRD (or will be, by the next PRD covering the area). Never write to `docs/prd/`.
 5. Rerun the tests yourself if the developer's verification claims look off.
 
 Then:
@@ -89,8 +89,6 @@ Only after the commit lands:
 
 - In the ticket file, check every acceptance-criterion checkbox and change the `Status:` line to `resolved`.
 - Never delete the ticket file during the feature; `.scratch/` is disposable once the feature is done.
-
-If a PRD exists for this feature, note on its index line (never in the PRD itself — PRDs are snapshots) which tickets it was split into — enough for future traceability without committing the tickets themselves.
 
 ### Escalation
 

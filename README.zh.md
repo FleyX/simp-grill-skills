@@ -44,7 +44,7 @@ and dev doc first, make the required changes, and run the relevant checks.
 /simp-grill            拷问式访谈需求;维护 CONTEXT.md 术语表 + ADR
 /simp-to-spec [--docs] 将对话综合为 spec
                        (--docs 时落盘为 docs/prd/ 下的快照 PRD)
-/simp-to-tickets       拆分为 tracer-bullet  tickets,存放于 .scratch/
+/simp-to-tickets       拆分为 tracer-bullet tickets,存放于 .scratch/;并提交规格文档(CONTEXT.md、ADR、PRD)
 /simp-implement        每个 ticket:primary 规划 → secondary 开发 → primary 审查
 /simp-code-review      独立的双轴审查,仅手动调用
 ```
@@ -66,9 +66,9 @@ and dev doc first, make the required changes, and run the relevant checks.
 - **大改小改由调用入口决定,不靠模型判断。** 需要持久 PRD 就用 `/simp-to-spec --docs`;不需要就用 `/simp-to-spec`,在会话内直接开发。
 - **落盘 PRD 必须经过确认。** 如果 `simp-grill` 认为应该生成持久 PRD,必须先说明理由并请求用户明确确认;未确认时使用不带 `--docs` 的 `/simp-to-spec`。
 - **ADR 三条标准缺一不可**:难以逆转、没有上下文会令人费解、存在真实的取舍。否则不记。
-- **PRD 是快照。** 一旦写入就不再修改。新 feature 在自己的 PRD 里声明 supersede;与 PRD 描述行为相悖的代码改动,在同一 commit 内将其索引行标记为 `→ partially stale`——包括那些没走 `--docs` 的小改动。
-- **ticket 是脚手架。** 永不入库;PRD 的索引行中记录该 feature 拆分成了哪些 ticket,足够追溯。
-- **两层审查。** `simp-implement` 做轻量的逐 ticket 审查(diff 对验收标准、PRD 过期标记检查);`simp-code-review` 是重型双轴审查——认为值得时手动调用,通常在 feature 收尾。
+- **PRD 是快照。** 一旦写入就不再修改。新 feature 在自己的 PRD 里声明 supersede。代码改动不碰 `docs/prd/`——偏离历史 PRD 是预期行为,由下一个覆盖该领域的 PRD supersede。
+- **ticket 是脚手架。** 永不入库;意图的持久记录是 PRD。
+- **两层审查。** `simp-implement` 做轻量的逐 ticket 审查(diff 对验收标准、PRD 一致性);`simp-code-review` 是重型双轴审查——认为值得时手动调用,通常在 feature 收尾。
 - **开发跑在 secondary model 上。** primary 只写 dev doc 和审查;secondary 负责读代码、编辑、跑测试。
 
 ## 安装
