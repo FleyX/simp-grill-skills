@@ -73,12 +73,3 @@ Write one file per ticket under `.scratch/<feature-slug>/issues/<NN>-<slug>.md`,
 Avoid specific file paths or code snippets — they go stale fast. Exception: a snippet that encodes a decision more precisely than prose (state machine, schema, type shape) may be inlined, trimmed to the decision-rich parts.
 
 Work the **frontier** — any ticket whose blockers are all done — one ticket at a time with `/simp-implement`, clearing context between tickets.
-
-### 6. Commit the spec artifacts
-
-Commit the durable documents produced so far, separately from any code:
-
-- Stage `CONTEXT.md`, `docs/adr/`, and `docs/prd/` (including the index). If step 0 added `.scratch/` to `.gitignore`, stage that too.
-- Commit with a message like `docs: spec artifacts for <feature-slug>` (follow the repo's commit-message convention if one exists).
-- Tickets under `.scratch/` are never included — they stay local.
-- If none of these paths have changes (e.g. `/simp-to-spec` ran without `--docs` and the grill produced no glossary or ADR changes), skip this step.

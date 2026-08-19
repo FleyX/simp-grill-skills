@@ -49,7 +49,7 @@ and dev doc first, make the required changes, and run the relevant checks.
 /simp-grill            interview the requirement; maintain CONTEXT.md + ADRs
 /simp-to-spec [--docs] synthesise the conversation into a spec
                        (--docs persists it as a snapshot PRD under docs/prd/)
-/simp-to-tickets       split into tracer-bullet tickets under .scratch/; commit the spec artifacts (CONTEXT.md, ADRs, PRDs)
+/simp-to-tickets       split into tracer-bullet tickets under .scratch/
 /simp-implement        per ticket: primary plans → secondary builds → primary reviews
 /simp-code-review      standalone two-axis review, invoked manually only
 ```
