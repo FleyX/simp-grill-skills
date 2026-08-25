@@ -64,9 +64,11 @@ If the seams aren't obvious from the ticket, confirm them with the user before d
 
 ### 2. Implement (secondary pair)
 
+Both roles — tester and implementer — ALWAYS run as subagents on the secondary model. The primary never writes tests or implementation code itself; apart from the dev doc (step 1) and the review (step 3), all code reading/writing happens inside these subagents.
+
 Work the dev doc's slices in order, two dispatches per slice, using the syntax supported by the host:
 
-- **Kimi Code**: spawn `Agent` calls with `subagent_type="coder"`.
+- **Kimi Code**: spawn `Agent` calls with `subagent_type="coder"` and **omit the `model` parameter** so the host's secondary-model default applies. NEVER pass `model="primary"` — the primary model does only the dev doc and the review.
 - **OpenCode**: spawn `Task` calls with `subagent_type="secondary"`. 
 
 Across slices you may resume each role's previous agent — the tester never reads implementation code, so resuming keeps the isolation intact. Within a slice, never let one agent do both jobs.
