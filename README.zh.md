@@ -45,7 +45,7 @@ and dev doc first, make the required changes, and run the relevant checks.
 /simp-to-spec [--docs] 将对话综合为 spec
                        (--docs 时落盘为 docs/prd/ 下的快照 PRD)
 /simp-to-tickets       拆分为 tracer-bullet tickets,存放于 .scratch/
-/simp-implement        每个 ticket:primary 规划 → secondary 开发 → primary 审查
+/simp-implement        每个 ticket:primary 规划 → secondary tester/implementer 对测试先行开发 → primary 审查
 /simp-code-review      独立的双轴审查,仅手动调用
 ```
 

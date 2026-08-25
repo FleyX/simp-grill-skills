@@ -1,12 +1,14 @@
 ---
 name: simp-implement
-description: "Implement one ticket: primary model writes a dev doc, secondary model implements it, primary model reviews, then the ticket is closed. No TDD."
+description: "Implement one ticket: primary model writes a dev doc, a secondary tester/implementer pair builds it test-first (red→green at pre-agreed seams), primary reviews, then the ticket is closed."
 disable-model-invocation: true
 ---
 
 # Simp Implement
 
-Implement one ticket via a **primary → secondary → primary** pipeline. The primary model (you) does the two quality-sensitive ends — planning and review. The secondary model does the token-heavy middle — reading code, editing, running tests.
+Implement one ticket via a **primary → secondary pair → primary** pipeline. The primary model (you) does the two quality-sensitive ends — planning and review. The secondary models do the token-heavy middle — reading code, writing tests, implementing, running tests.
+
+Tests come first. A **tester** secondary writes failing tests at the seams declared in the dev doc; an **implementer** secondary makes them green without ever touching the test files. The two roles never share an agent, so no model grades its own work.
 
 Tickets live at `.scratch/<feature-slug>/issues/<NN>-<slug>.md` (from `/simp-to-tickets`). Work the frontier: any ticket whose blockers are all resolved.
 
@@ -38,13 +40,17 @@ The modules, seams, and domain vocabulary involved (use `CONTEXT.md` terms). Nam
 
 Which sections of which PRDs under `docs/prd/` this change contradicts — or "None". Check the index at `docs/prd/README.md`. Informational only: simp-implement never writes to `docs/prd/` — supersede declarations belong to simp-to-spec.
 
-## Implementation plan
+## Seams under test
 
-Numbered steps. Each step: what to change, in which module, and why. Include interface shapes (signatures, schema, type shapes) where prose would be ambiguous.
+The public boundaries where behaviour is observed — one line per seam: the interface and which acceptance criteria it covers. "None" only for pure plumbing with no observable behaviour. Tests live at these seams and nowhere else.
+
+## Slices
+
+Vertical slices, one per red → green cycle. Each slice: the seam under test, the exact behaviour the test asserts (with concrete expected values from an independent source — the ticket, a worked example, a known-good literal), and a note on the minimal implementation. Include interface shapes (signatures, schema, type shapes) where prose would be ambiguous.
 
 ## Verification
 
-How the developer proves each acceptance criterion: which existing tests must stay green, which new behaviour to check.
+Which slice's test covers each acceptance criterion, which existing tests must stay green, and the full-suite run after the final slice.
 
 ## Out of scope
 
@@ -52,20 +58,32 @@ What the developer must NOT touch — adjacent refactors, speculative abstractio
 
 </dev-doc-template>
 
-Keep it decision-rich and short. This doc is the developer's entire context pack — if it forces them to re-explore the whole repo, it has failed.
+Keep it decision-rich and short. This doc is the entire context pack for both secondaries — if it forces them to re-explore the whole repo, it has failed.
 
-### 2. Implement (secondary)
+If the seams aren't obvious from the ticket, confirm them with the user before dispatching — no test gets written at an unconfirmed seam.
 
-Dispatch exactly ONE secondary developer call using the syntax supported by the host:
+### 2. Implement (secondary pair)
 
-- **Kimi Code**: spawn one `Agent` call with `subagent_type="coder"` and `model="secondary"`.
-- **OpenCode**: spawn one `Task` call with `subagent_type="secondary"`. Do not pass `model="secondary"`: `secondary` is the OpenCode agent name, and its model is configured by the agent (for example, `opencode-go/deepseek-v4-flash`).
+Work the dev doc's slices in order, two dispatches per slice, using the syntax supported by the host:
 
-The prompt must include:
+- **Kimi Code**: spawn `Agent` calls with `subagent_type="coder"`.
+- **OpenCode**: spawn `Task` calls with `subagent_type="secondary"`. 
 
-- The dev doc path and the ticket path — tell it to read both in full before touching code.
-- The brief: "Implement exactly the plan in the dev doc — no more, no less. Stay out of the out-of-scope list. Run typechecking and the relevant tests as you go; fix what you break. If the plan turns out to be wrong or unimplementable, STOP and report why instead of improvising a different design."
+Across slices you may resume each role's previous agent — the tester never reads implementation code, so resuming keeps the isolation intact. Within a slice, never let one agent do both jobs.
+
+**Tester prompt** must include:
+
+- The dev doc path and the ticket path — tell it to read both in full before writing anything.
+- The brief: "Write exactly ONE failing test for the current slice, at the seam named in the dev doc. Test behaviour through the public interface, not internals. Expected values come only from the dev doc or ticket — never recompute them the way an implementation would. Do not read the feature's implementation files; work from the dev doc and the seam's public surface. Run the test and confirm it fails for the right reason. If the seam is untestable or the slice spec is wrong, STOP and report why instead of improvising."
+- The report format: "Report under 150 words: the test file path, what the test asserts, and the failure output proving red."
+
+**Implementer prompt** must include:
+
+- The dev doc path, the ticket path, and the test file path from the tester.
+- The brief: "Make the failing test green with the minimal implementation. Do NOT modify the test file — if the test cannot pass without changing it, STOP and report why. Stay out of the out-of-scope list. Run this slice's test and typechecking as you go; fix what you break. If the plan turns out to be wrong or unimplementable, STOP and report why instead of improvising a different design."
 - The report format: "Report under 300 words: what you changed (modules, not line counts), verification results (typecheck, tests — with failures quoted), and any deviations from the plan with reasons."
+
+After the final slice, the implementer runs the full test suite once and includes the result in its report.
 
 ### 3. Review (primary)
 
@@ -73,15 +91,16 @@ Review the result yourself — lightweight and per-ticket. The heavy two-axis re
 
 1. `git diff` the ticket's changes and read the diff in full.
 2. Check each acceptance criterion against the diff — every one must be demonstrably satisfied.
-3. Check for scope creep: anything in the diff the dev doc didn't ask for.
-4. **PRD fidelity**: if the diff contradicts the current feature's own PRD, flag it to the user before committing. Contradictions with historical PRDs are expected — they were declared as supersedes by the feature's PRD (or will be, by the next PRD covering the area). Never write to `docs/prd/`.
-5. Rerun the tests yourself if the developer's verification claims look off.
+3. Check for scope creep: anything in the diff the dev doc didn't ask for — including tests written outside the declared seams.
+4. **TDD discipline**: every acceptance criterion is covered by a behaviour test at a declared seam, and it passes. Tests are not implementation-coupled (mocking internal collaborators, testing privates) and not tautological (expected values recomputed the way the code does). Test files are untouched since the tester produced them — verify with the diff.
+5. **PRD fidelity**: if the diff contradicts the current feature's own PRD, flag it to the user before committing. Contradictions with historical PRDs are expected — they were declared as supersedes by the feature's PRD (or will be, by the next PRD covering the area). Never write to `docs/prd/`.
+6. Rerun the tests yourself if either secondary's verification claims look off.
 
 Then:
 
 - **All good** → commit the work to the current branch, then close the ticket (step 4).
 - **Small issues** (style, a missed edge case) → fix them yourself, commit, then close the ticket (step 4).
-- **Plan was wrong or implementation is broken** → revise the dev doc, spawn a FRESH secondary agent (do not resume the old one — its context is polluted with the wrong approach) and repeat from step 2. The ticket stays open.
+- **Plan was wrong, test is wrong, or implementation is broken** → revise the dev doc, spawn FRESH secondary agents (do not resume the old ones — their context is polluted with the wrong approach) and repeat from step 2. The ticket stays open.
 
 ### 4. Close the ticket
 
@@ -92,4 +111,4 @@ Only after the commit lands:
 
 ### Escalation
 
-If a ticket bounces back from secondary twice, or the dev doc itself needs design-level rethinking, stop and tell the user — this ticket is beyond the secondary model and should be implemented by the primary directly. Don't let secondary retry-loop indefinitely.
+If a ticket bounces back from either secondary role twice, or the dev doc itself needs design-level rethinking, stop and tell the user — this ticket is beyond the secondary models and should be implemented by the primary directly. Don't let secondaries retry-loop indefinitely.
