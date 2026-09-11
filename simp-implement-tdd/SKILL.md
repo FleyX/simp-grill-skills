@@ -1,6 +1,6 @@
 ---
-name: simp-implement
-description: "Implement one ticket: primary model writes a dev doc, a secondary tester/implementer pair builds it test-first (red→green at pre-agreed seams), primary reviews, then the ticket is closed."
+name: simp-implement-tdd
+description: "Implement one ticket test-first: primary model writes a dev doc, a secondary tester/implementer pair builds it red→green at pre-agreed seams, primary reviews, then the ticket is closed. TDD variant of simp-implement."
 disable-model-invocation: true
 ---
 
