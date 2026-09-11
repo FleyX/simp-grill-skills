@@ -4,7 +4,7 @@
 
 ## 运行时兼容
 
-本流水线同时支持 Kimi Code 和 OpenCode。`simp-implement` 的工作流保持不变,只有 secondary agent 的调用语法不同:
+本流水线同时支持 Kimi Code 和 OpenCode。`simp-implement`/`simp-implement-tdd` 的工作流保持不变,只有 secondary agent 的调用语法不同:
 
 | 运行时 | 调用方式 | 目标 | 配置方式 |
 |---|---|---|---|
@@ -14,8 +14,10 @@
 Kimi Code:
 
 ```text
-Agent(subagent_type="coder", model="secondary")
+Agent(subagent_type="coder")
 ```
+
+省略 `model` 参数,走宿主的 secondary model 默认配置。
 
 OpenCode:
 
@@ -45,7 +47,8 @@ and dev doc first, make the required changes, and run the relevant checks.
 /simp-to-spec [--docs] 将对话综合为 spec
                        (--docs 时落盘为 docs/prd/ 下的快照 PRD)
 /simp-to-tickets       拆分为 tracer-bullet tickets,存放于 .scratch/
-/simp-implement        每个 ticket:primary 规划 → secondary tester/implementer 对测试先行开发 → primary 审查
+/simp-implement        每个 ticket:primary 规划 → secondary 实现 → primary 审查
+/simp-implement-tdd    TDD 变体:secondary tester/implementer 对测试先行开发
 /simp-code-review      独立的双轴审查,仅手动调用
 ```
 
@@ -59,7 +62,7 @@ and dev doc first, make the required changes, and run the relevant checks.
 | ADR | `docs/adr/` | 是 | 快照——只 supersede,从不修改 | simp-grill / simp-to-spec |
 | PRD | `docs/prd/`(+ `README.md` 索引) | 是 | 快照——只 supersede,从不修改;索引行承载状态标记 | simp-to-spec --docs |
 | tickets | `.scratch/<feature>/issues/` | **否**(gitignore) | 临时 | simp-to-tickets |
-| dev docs | `.scratch/<feature>/dev-docs/` | **否**(gitignore) | 临时 | simp-implement |
+| dev docs | `.scratch/<feature>/dev-docs/` | **否**(gitignore) | 临时 | simp-implement / simp-implement-tdd |
 
 ## 核心规则
 

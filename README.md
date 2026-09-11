@@ -7,8 +7,8 @@ A minimal, cost-conscious skill pipeline for feature development, adapted from [
 ## Runtime Compatibility
 
 The pipeline is designed to work with both Kimi Code and OpenCode. The
-`simp-implement` workflow stays the same; only the secondary-agent dispatch
-syntax changes:
+`simp-implement`/`simp-implement-tdd` workflows stay the same; only the
+secondary-agent dispatch syntax changes:
 
 | Runtime | Dispatch | Target | Configuration |
 |---|---|---|---|
@@ -18,8 +18,10 @@ syntax changes:
 Kimi Code:
 
 ```text
-Agent(subagent_type="coder", model="secondary")
+Agent(subagent_type="coder")
 ```
+
+Omit the `model` parameter so the host's secondary-model default applies.
 
 OpenCode:
 
@@ -50,7 +52,8 @@ and dev doc first, make the required changes, and run the relevant checks.
 /simp-to-spec [--docs] synthesise the conversation into a spec
                        (--docs persists it as a snapshot PRD under docs/prd/)
 /simp-to-tickets       split into tracer-bullet tickets under .scratch/
-/simp-implement        per ticket: primary plans → secondary tester/implementer pair builds test-first → primary reviews
+/simp-implement        per ticket: primary plans → secondary implements → primary reviews
+/simp-implement-tdd    TDD variant: secondary tester/implementer pair builds test-first
 /simp-code-review      standalone two-axis review, invoked manually only
 ```
 
@@ -64,7 +67,7 @@ Run `simp-grill` → `simp-to-spec` → `simp-to-tickets` in **one unbroken cont
 | ADRs | `docs/adr/` | yes | snapshots — supersede, never edit | simp-grill / simp-to-spec |
 | PRDs | `docs/prd/` (+ `README.md` index) | yes | snapshots — supersede, never edit; index carries status markers | simp-to-spec --docs |
 | Tickets | `.scratch/<feature>/issues/` | **no** (gitignored) | ephemeral | simp-to-tickets |
-| Dev docs | `.scratch/<feature>/dev-docs/` | **no** (gitignored) | ephemeral | simp-implement |
+| Dev docs | `.scratch/<feature>/dev-docs/` | **no** (gitignored) | ephemeral | simp-implement / simp-implement-tdd |
 
 ## Rules worth knowing
 
