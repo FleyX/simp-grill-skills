@@ -46,6 +46,10 @@ When a term is resolved, update `CONTEXT.md` right there — don't batch. It is 
 
 If any of the three is missing, skip the ADR. ADRs are **snapshots**: never edit one; supersede it with a new ADR. Use the format in [ADR-FORMAT.md](./ADR-FORMAT.md).
 
-## Next step
+## Stage boundary
 
-When the interview converges, continue in the **same context window** with `/simp-to-spec`. Do not automatically choose `--docs`. If you think the feature would benefit from a durable PRD, explain why and ask the user for explicit confirmation first. Invoke `/simp-to-spec --docs` only after the user confirms; otherwise use `/simp-to-spec` without `--docs`.
+When the interview converges and the user confirms shared understanding, present a concise summary and STOP. Do not invoke `/simp-to-spec`, write a spec, create tickets, or implement the requirement. Confirming shared understanding is not authorization to enter another stage, even if the original request listed later stages.
+
+You may suggest the next command without running it. If a durable PRD would help, explain why and suggest `/simp-to-spec --docs`; otherwise suggest `/simp-to-spec`. The user must explicitly invoke the chosen command in a later message. When they do, continue in the **same unbroken context window**.
+
+If you realize you have crossed this boundary, stop immediately, disclose what was produced, and leave it in place. Do not delete it or continue the later stage; wait for the user's instruction.

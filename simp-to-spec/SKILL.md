@@ -8,11 +8,11 @@ disable-model-invocation: true
 
 Take the current conversation context and codebase understanding and produce a spec (aka PRD). Do NOT interview the user — just synthesise what you already know.
 
-Run this in the **same unbroken context window** as the preceding `/simp-grill` session — the spec builds on that thinking.
+When following `/simp-grill`, run this in the **same unbroken context window** — the spec builds on that thinking. Independent invocation is also allowed when the conversation already contains enough requirement context. If the input is insufficient, stop and ask for the missing input; do not interview the user or invoke `/simp-grill` to fill the gap.
 
 ## Arguments
 
-- **No argument** → synthesise the spec in conversation only, then continue straight to `/simp-to-tickets`. Nothing is persisted. Use for small, single-session work.
+- **No argument** → synthesise the spec in conversation only. Nothing is persisted. Use for small, single-session work.
 - **`--docs`** → additionally persist the spec as a durable PRD (step 4). Use for features whose intent must survive after the context window is gone.
 
 ## Process
@@ -74,6 +74,10 @@ Anything else worth recording.
 - **Declare supersedes — never amend historical PRDs.** PRDs are snapshots: once written, a PRD is never edited. Use the index to find existing PRDs whose described behaviour this feature changes, and note at the end of the new PRD which sections of which historical PRDs it supersedes. Sections not mentioned remain in effect.
 - **ADR check.** If the conversation settled a decision that is hard to reverse, surprising without context, and the result of a real trade-off, record it as a new ADR per the `/simp-grill` ADR rules, and reference it from the spec's Implementation Decisions.
 
-### 5. Continue
+### 5. Stop at the stage boundary
 
-Proceed to `/simp-to-tickets` in the same context window.
+Present the spec and STOP. Do not invoke `/simp-to-tickets`, create tickets, or implement any part of the spec. Agreement on test seams, approval of the spec, or an earlier request listing later stages is not authorization to continue.
+
+You may suggest `/simp-to-tickets` as the next command without running it. The user must explicitly invoke it in a later message, in the **same unbroken context window** when using a conversation-only spec.
+
+If you realize you have crossed this boundary, stop immediately, disclose what was produced, and leave it in place. Do not delete it or continue the later stage; wait for the user's instruction.

@@ -52,7 +52,7 @@ and dev doc first, make the required changes, and run the relevant checks.
 /simp-code-review      独立的双轴审查,仅手动调用
 ```
 
-`simp-grill` → `simp-to-spec` → `simp-to-tickets` 要在**同一个不中断的上下文窗口**内运行——每一步都建立在前面的思考之上。每个 `/simp-implement` 在全新的上下文中运行,一次一个 ticket。
+`simp-grill` → `simp-to-spec` → `simp-to-tickets` 要由用户在**同一个不中断的上下文窗口**内分别手动调用——每一步都建立在前面的思考之上,不会自动串联。每个 `/simp-implement` 在全新的上下文中运行,一次一个 ticket,完成后停止。
 
 ## 文档地图
 
@@ -66,8 +66,11 @@ and dev doc first, make the required changes, and run the relevant checks.
 
 ## 核心规则
 
-- **大改小改由调用入口决定,不靠模型判断。** 需要持久 PRD 就用 `/simp-to-spec --docs`;不需要就用 `/simp-to-spec`,在会话内直接开发。
-- **落盘 PRD 必须经过确认。** 如果 `simp-grill` 认为应该生成持久 PRD,必须先说明理由并请求用户明确确认;未确认时使用不带 `--docs` 的 `/simp-to-spec`。
+- **大改小改由调用入口决定,不靠模型判断。** 需要持久 PRD 就明确调用 `/simp-to-spec --docs`;不需要就调用 `/simp-to-spec`,只在会话内生成 spec。
+- **所有阶段都设闸门。** 每个 skill 完成自身职责后停止,可以提示下一步命令,但不得调用下一阶段。确认当前产物、回复“继续”或在最初请求中列出完整流程,都不构成跨阶段授权;用户必须在看到当前产物后明确调用下一个 skill。
+- **允许独立入口。** 输入充分时可直接调用后续 skill;输入不足时停止并说明缺什么,不自动补跑前序阶段。
+- **落盘 PRD 必须显式选择。** 如果 `simp-grill` 认为应该生成持久 PRD,可以说明理由并建议 `/simp-to-spec --docs`,但不得自行调用;只有用户明确调用该命令才落盘。
+- **越界后立即停止。** 说明已经产生了什么并保留现场,不自动删除或继续后续工作,等待用户指示。
 - **ADR 三条标准缺一不可**:难以逆转、没有上下文会令人费解、存在真实的取舍。否则不记。
 - **PRD 是快照。** 一旦写入就不再修改。新 feature 在自己的 PRD 里声明 supersede。代码改动不碰 `docs/prd/`——偏离历史 PRD 是预期行为,由下一个覆盖该领域的 PRD supersede。
 - **ticket 是脚手架。** 永不入库;意图的持久记录是 PRD。

@@ -111,6 +111,12 @@ Only after the commit lands:
 - In the ticket file, check every acceptance-criterion checkbox and change the `Status:` line to `resolved`.
 - Never delete the ticket file during the feature; `.scratch/` is disposable once the feature is done.
 
+### 5. Stop at the stage boundary
+
+Report the committed ticket and STOP. Do not select or implement another ticket, invoke `/simp-code-review`, or invoke any other skill. A resolved ticket or remaining unblocked tickets are not authorization to continue; the user must explicitly request each next action.
+
+If you realize you have crossed this boundary, stop immediately, disclose what was produced, and leave it in place. Do not delete it or continue the later work; wait for the user's instruction.
+
 ### Escalation
 
 If a ticket bounces back from either secondary role twice, or the dev doc itself needs design-level rethinking, stop and tell the user — this ticket is beyond the secondary models and should be implemented by the primary directly. Don't let secondaries retry-loop indefinitely.

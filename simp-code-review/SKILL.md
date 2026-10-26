@@ -82,6 +82,10 @@ Present the two reports under `## Standards` and `## Spec` headings, verbatim or
 
 End with a one-line summary: total findings per axis, and the worst issue _within each axis_ (if any). Don't pick a single winner across axes.
 
+Then STOP. Do not fix findings, implement tickets, or invoke another skill. The review report is not authorization for further work; the user must explicitly request any next action.
+
+If you realize you have crossed this boundary, stop immediately, disclose what was produced, and leave it in place. Do not delete it or continue the later work; wait for the user's instruction.
+
 ## Why two axes
 
 A change can pass one axis and fail the other:
