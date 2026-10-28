@@ -1,14 +1,14 @@
 ---
 name: simp-to-tickets
-description: "Break a spec or the current conversation into tracer-bullet tickets with blocking edges, persisted as local markdown under .scratch/ (never committed)."
+description: "Break a persisted PRD into tracer-bullet tickets with blocking edges, persisted as local markdown under .scratch/ (never committed)."
 disable-model-invocation: true
 ---
 
 # Simp To Tickets
 
-Break the spec or conversation into **tickets** — tracer-bullet vertical slices, each declaring the tickets that **block** it.
+Break the persisted PRD into **tickets** — tracer-bullet vertical slices, each declaring the tickets that **block** it.
 
-Tickets live **only** as local files under `.scratch/` — ephemeral work-tracking artifacts, never committed to git. The durable record of intent is the PRD (`docs/prd/`); tickets are scaffolding.
+Tickets live **only** as local files under `.scratch/` — ephemeral work-tracking artifacts, never committed to git. The PRD at `.scratch/<feature-slug>/prd.md` is the local, long-term record of intent. Tickets are scaffolding; keep the PRD when cleaning them up.
 
 ## Process
 
@@ -18,7 +18,7 @@ Ensure `.scratch/` is in the project's `.gitignore`. If it isn't, add it (a one-
 
 ### 1. Gather context
 
-Work from whatever is already in the conversation context — this skill normally follows `/simp-to-spec` in the same window. If the user passes a spec path as an argument, read it in full. Independent invocation is allowed when the supplied spec or conversation is sufficient. If it is insufficient, stop and ask for the missing input; do not invoke `/simp-to-spec` or `/simp-grill` to fill the gap.
+Read the PRD in full using the path supplied by `/simp-to-spec` in the conversation or passed explicitly as an argument. Independent invocation in a fresh context requires an explicit PRD path. If no PRD path is available, stop and ask for it; do not invoke `/simp-to-spec` or `/simp-grill` to fill the gap.
 
 ### 2. Explore the codebase (optional)
 
@@ -59,6 +59,8 @@ Write one file per ticket under `.scratch/<feature-slug>/issues/<NN>-<slug>.md`,
 
 # <NN> — <Ticket title>
 
+**PRD:** the path to `.scratch/<feature-slug>/prd.md`.
+
 **What to build:** the end-to-end behaviour this ticket makes work, from the user's perspective — not a layer-by-layer implementation list.
 
 **Blocked by:** the numbers/titles of the gating tickets, or "None — eligible for explicit implementation".
@@ -70,7 +72,7 @@ Write one file per ticket under `.scratch/<feature-slug>/issues/<NN>-<slug>.md`,
 
 </ticket-template>
 
-Avoid specific file paths or code snippets — they go stale fast. Exception: a snippet that encodes a decision more precisely than prose (state machine, schema, type shape) may be inlined, trimmed to the decision-rich parts.
+Apart from the required PRD reference, avoid specific file paths or code snippets — they go stale fast. Exception: a snippet that encodes a decision more precisely than prose (state machine, schema, type shape) may be inlined, trimmed to the decision-rich parts.
 
 ### 6. Stop at the stage boundary
 

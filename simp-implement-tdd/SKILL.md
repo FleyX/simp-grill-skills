@@ -16,13 +16,15 @@ Tickets live at `.scratch/<feature-slug>/issues/<NN>-<slug>.md` (from `/simp-to-
 
 ### 1. Write the dev doc (primary)
 
-Read the ticket, then explore only what you need to write a precise dev doc. Check `docs/prd/README.md` for PRDs covering the modules you'll touch — if any, read the relevant sections (not whole documents).
+Read the ticket and the PRD it references in full, then explore only what you need to write a precise dev doc. The PRD records this requirement's intent; code and tests describe current behaviour. Do not consult historical PRDs to judge current behaviour.
 
 Save the dev doc to `.scratch/<feature-slug>/dev-docs/<NN>-<slug>.md`:
 
 <dev-doc-template>
 
 # <NN> — <Ticket title>
+
+**PRD:** the PRD path copied from the ticket.
 
 ## Goal
 
@@ -35,10 +37,6 @@ The ticket's acceptance criteria, verbatim.
 ## Where to work
 
 The modules, seams, and domain vocabulary involved (use `CONTEXT.md` terms). Name modules and seams, not exhaustive file lists.
-
-## PRD impact
-
-Which sections of which PRDs under `docs/prd/` this change contradicts — or "None". Check the index at `docs/prd/README.md`. Informational only: simp-implement never writes to `docs/prd/` — supersede declarations belong to simp-to-spec.
 
 ## Seams under test
 
@@ -95,7 +93,7 @@ Review the result yourself — lightweight and per-ticket. The heavy two-axis re
 2. Check each acceptance criterion against the diff — every one must be demonstrably satisfied.
 3. Check for scope creep: anything in the diff the dev doc didn't ask for — including tests written outside the declared seams.
 4. **TDD discipline**: every acceptance criterion is covered by a behaviour test at a declared seam, and it passes. Tests are not implementation-coupled (mocking internal collaborators, testing privates) and not tautological (expected values recomputed the way the code does). Test files are untouched since the tester produced them — verify with the diff.
-5. **PRD fidelity**: if the diff contradicts the current feature's own PRD, flag it to the user before committing. Contradictions with historical PRDs are expected — they were declared as supersedes by the feature's PRD (or will be, by the next PRD covering the area). Never write to `docs/prd/`.
+5. **PRD fidelity**: if the diff contradicts the PRD referenced by the current ticket, flag it to the user before committing. Historical PRDs do not describe current behaviour. Never edit the PRD.
 6. Rerun the tests yourself if either secondary's verification claims look off.
 
 Then:
@@ -109,7 +107,7 @@ Then:
 Only after the commit lands:
 
 - In the ticket file, check every acceptance-criterion checkbox and change the `Status:` line to `resolved`.
-- Never delete the ticket file during the feature; `.scratch/` is disposable once the feature is done.
+- Never delete the ticket file during the feature. Tickets and dev docs are disposable once the feature is done; keep the PRD.
 
 ### 5. Stop at the stage boundary
 

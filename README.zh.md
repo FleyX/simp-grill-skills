@@ -44,15 +44,15 @@ and dev doc first, make the required changes, and run the relevant checks.
 
 ```
 /simp-grill            拷问式访谈需求;维护 CONTEXT.md 术语表 + ADR
-/simp-to-spec [--docs] 将对话综合为 spec
-                       (--docs 时落盘为 docs/prd/ 下的快照 PRD)
-/simp-to-tickets       拆分为 tracer-bullet tickets,存放于 .scratch/
+/simp-to-spec          将对话综合为 spec
+                       (始终在 .scratch/ 下落盘快照 PRD)
+/simp-to-tickets       将 PRD 拆分为 tracer-bullet tickets,存放于 .scratch/
 /simp-implement        每个 ticket:primary 规划 → secondary 实现 → primary 审查
 /simp-implement-tdd    TDD 变体:secondary tester/implementer 对测试先行开发
 /simp-code-review      独立的双轴审查,仅手动调用
 ```
 
-`simp-grill` → `simp-to-spec` → `simp-to-tickets` 要由用户在**同一个不中断的上下文窗口**内分别手动调用——每一步都建立在前面的思考之上,不会自动串联。每个 `/simp-implement` 在全新的上下文中运行,一次一个 ticket,完成后停止。
+`simp-grill` → `simp-to-spec` 要由用户在**同一个不中断的上下文窗口**内分别手动调用——spec 建立在访谈的思考之上。`simp-to-tickets` 需单独手动调用,可以在同一窗口,也可以在新会话中显式传入 PRD 路径。各 skill 不会自动串联。每个 `/simp-implement` 在全新的上下文中运行,一次一个 ticket,完成后停止。
 
 ## 文档地图
 
@@ -60,26 +60,40 @@ and dev doc first, make the required changes, and run the relevant checks.
 |---|---|---|---|---|
 | 术语表 | `CONTEXT.md` | 是 | 活文档(仅术语) | simp-grill |
 | ADR | `docs/adr/` | 是 | 快照——只 supersede,从不修改 | simp-grill / simp-to-spec |
-| PRD | `docs/prd/`(+ `README.md` 索引) | 是 | 快照——只 supersede,从不修改;索引行承载状态标记 | simp-to-spec --docs |
-| tickets | `.scratch/<feature>/issues/` | **否**(gitignore) | 临时 | simp-to-tickets |
+| PRD | `.scratch/<feature>/prd.md` | **否**(gitignore) | 本地长期快照——从不修改 | simp-to-spec |
+| tickets | `.scratch/<feature>/issues/` | **否**(gitignore) | 临时;每个 ticket 引用其 PRD | simp-to-tickets |
 | dev docs | `.scratch/<feature>/dev-docs/` | **否**(gitignore) | 临时 | simp-implement / simp-implement-tdd |
 
 ## 核心规则
 
-- **大改小改由调用入口决定,不靠模型判断。** 需要持久 PRD 就明确调用 `/simp-to-spec --docs`;不需要就调用 `/simp-to-spec`,只在会话内生成 spec。
+- **每次生成 spec 都会落盘。** `/simp-to-spec` 始终写入本地 PRD,不再有 `--docs` 选项,也不需要判断大改小改。
 - **所有阶段都设闸门。** 每个 skill 完成自身职责后停止,可以提示下一步命令,但不得调用下一阶段。确认当前产物、回复“继续”或在最初请求中列出完整流程,都不构成跨阶段授权;用户必须在看到当前产物后明确调用下一个 skill。
-- **允许独立入口。** 输入充分时可直接调用后续 skill;输入不足时停止并说明缺什么,不自动补跑前序阶段。
-- **落盘 PRD 必须显式选择。** 如果 `simp-grill` 认为应该生成持久 PRD,可以说明理由并建议 `/simp-to-spec --docs`,但不得自行调用;只有用户明确调用该命令才落盘。
+- **允许独立入口。** 输入充分时可直接调用后续 skill;在新会话独立调用 `simp-to-tickets` 时必须显式传入 PRD 路径。输入不足时停止并说明缺什么,不自动补跑前序阶段。
+- **PRD 在本地长期保留。** 只用于本机追溯,不通过 git 共享;清理 `.scratch/` 时仍要保留 PRD。
 - **越界后立即停止。** 说明已经产生了什么并保留现场,不自动删除或继续后续工作,等待用户指示。
 - **ADR 三条标准缺一不可**:难以逆转、没有上下文会令人费解、存在真实的取舍。否则不记。
-- **PRD 是快照。** 一旦写入就不再修改。新 feature 在自己的 PRD 里声明 supersede。代码改动不碰 `docs/prd/`——偏离历史 PRD 是预期行为,由下一个覆盖该领域的 PRD supersede。
-- **ticket 是脚手架。** 永不入库;意图的持久记录是 PRD。
+- **PRD 是历史快照。** 一旦写入就不再修改,不再维护 PRD 索引或 supersede 机制。代码和测试说明当前行为;PRD 记录各个需求当时的意图。
+- **ticket 是脚手架。** 永不入库,并将 PRD 路径传递给实现阶段;tickets 和 dev docs 可清理,PRD 不可清理。
 - **两层审查。** `simp-implement` 做轻量的逐 ticket 审查(diff 对验收标准、PRD 一致性);`simp-code-review` 是重型双轴审查——认为值得时手动调用,通常在 feature 收尾。
 - **开发跑在 secondary model 上。** primary 只写 dev doc 和审查;secondary 负责读代码、编辑、跑测试。
 
 ## 安装
 
-将 skill 目录软链(或复制)到 agent 的 skills 目录,例如:
+运行安装脚本,可选参数为安装目录:
+
+```sh
+./install.sh [目标目录]
+```
+
+Windows:
+
+```bat
+install.bat [目标目录]
+```
+
+Linux/macOS 默认安装到 `~/.agents/skills`,Windows 默认安装到 `%USERPROFILE%\.agents\skills`。脚本会复制所有 skill 目录;重复运行时会覆盖同名文件。
+
+如需改为软链 skill 目录:
 
 ```sh
 ln -s "$PWD"/simp-* ~/.agents/skills/

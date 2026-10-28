@@ -49,15 +49,15 @@ and dev doc first, make the required changes, and run the relevant checks.
 
 ```
 /simp-grill            interview the requirement; maintain CONTEXT.md + ADRs
-/simp-to-spec [--docs] synthesise the conversation into a spec
-                       (--docs persists it as a snapshot PRD under docs/prd/)
-/simp-to-tickets       split into tracer-bullet tickets under .scratch/
+/simp-to-spec          synthesise the conversation into a spec
+                       (always persists a snapshot PRD under .scratch/)
+/simp-to-tickets       split the PRD into tracer-bullet tickets under .scratch/
 /simp-implement        per ticket: primary plans → secondary implements → primary reviews
 /simp-implement-tdd    TDD variant: secondary tester/implementer pair builds test-first
 /simp-code-review      standalone two-axis review, invoked manually only
 ```
 
-Invoke `simp-grill` → `simp-to-spec` → `simp-to-tickets` manually, one at a time, in **one unbroken context window** — each builds on the same thinking, and none invokes the next automatically. Each `/simp-implement` runs in a fresh context, implements one ticket, then stops.
+Invoke `simp-grill` → `simp-to-spec` manually in **one unbroken context window** — the spec builds on the interview. Invoke `simp-to-tickets` separately in the same window or in a fresh one with an explicit PRD path. No skill invokes the next automatically. Each `/simp-implement` runs in a fresh context, implements one ticket, then stops.
 
 ## Document map
 
@@ -65,26 +65,40 @@ Invoke `simp-grill` → `simp-to-spec` → `simp-to-tickets` manually, one at a 
 |---|---|---|---|---|
 | Glossary | `CONTEXT.md` | yes | living (terms only) | simp-grill |
 | ADRs | `docs/adr/` | yes | snapshots — supersede, never edit | simp-grill / simp-to-spec |
-| PRDs | `docs/prd/` (+ `README.md` index) | yes | snapshots — supersede, never edit; index carries status markers | simp-to-spec --docs |
-| Tickets | `.scratch/<feature>/issues/` | **no** (gitignored) | ephemeral | simp-to-tickets |
+| PRDs | `.scratch/<feature>/prd.md` | **no** (gitignored) | local, long-term snapshots — never edit | simp-to-spec |
+| Tickets | `.scratch/<feature>/issues/` | **no** (gitignored) | ephemeral; each references its PRD | simp-to-tickets |
 | Dev docs | `.scratch/<feature>/dev-docs/` | **no** (gitignored) | ephemeral | simp-implement / simp-implement-tdd |
 
 ## Rules worth knowing
 
-- **Big vs small is chosen by invocation, not by judgement.** Want a durable PRD? Explicitly invoke `/simp-to-spec --docs`. Don't? Invoke `/simp-to-spec` to synthesise it in conversation only.
+- **Every spec is persisted.** `/simp-to-spec` always writes a local PRD; there is no `--docs` option or big-vs-small persistence decision.
 - **Every stage has a gate.** Each skill completes its own work and stops. It may suggest the next command but must not invoke it. Approving the current output, saying “continue”, or listing the full pipeline in the original request does not authorize another stage; after seeing the current output, the user must explicitly invoke the next skill.
-- **Independent entry is allowed.** Invoke a later skill directly when its input is sufficient. If input is missing, stop and report what is needed instead of automatically running earlier stages.
-- **PRD persistence requires an explicit choice.** If `simp-grill` thinks a durable PRD would help, it may explain why and suggest `/simp-to-spec --docs`, but must never invoke it. Only the user's explicit invocation persists the PRD.
+- **Independent entry is allowed.** Invoke a later skill directly when its input is sufficient. A fresh-context `simp-to-tickets` invocation needs an explicit PRD path. If input is missing, stop and report what is needed instead of automatically running earlier stages.
+- **PRDs are local and long-term.** They support traceability on this machine but are not shared through git. Keep them when cleaning up `.scratch/`.
 - **Boundary violations stop immediately.** Disclose what was produced and leave it in place; do not delete it or continue later work. Wait for the user's instruction.
 - **ADRs need all three**: hard to reverse, surprising without context, a real trade-off. Otherwise skip.
-- **PRDs are snapshots.** Once written, a PRD is never edited. New features declare supersedes in their own PRD. Code changes never touch `docs/prd/` — deviations from historical PRDs are expected and get superseded by the next PRD covering the area.
-- **Tickets are scaffolding.** They are never committed; the durable record of intent is the PRD.
+- **PRDs are historical snapshots.** Once written, a PRD is never edited. There is no PRD index or supersede mechanism. Code and tests describe current behaviour; PRDs record the intent of individual requirements.
+- **Tickets are scaffolding.** They are never committed and carry the PRD path into implementation. Tickets and dev docs are disposable; PRDs are not.
 - **Two levels of review.** `simp-implement` does a lightweight per-ticket review (diff vs acceptance criteria, PRD fidelity). `simp-code-review` is the heavy two-axis review — run it manually when it's worth the cost, typically at feature end.
 - **Implementation runs on the secondary model.** The primary writes the dev doc and reviews; the secondary reads code, edits, and runs tests.
 
 ## Installation
 
-Symlink (or copy) the skill directories into your agent's skills directory, e.g.:
+Run the installer with an optional target directory:
+
+```sh
+./install.sh [target-directory]
+```
+
+On Windows:
+
+```bat
+install.bat [target-directory]
+```
+
+The default target is `~/.agents/skills` on Linux/macOS and `%USERPROFILE%\.agents\skills` on Windows. Both scripts copy every skill directory and overwrite same-named files when run again.
+
+To symlink the skill directories instead:
 
 ```sh
 ln -s "$PWD"/simp-* ~/.agents/skills/

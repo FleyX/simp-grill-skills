@@ -50,6 +50,6 @@ If any of the three is missing, skip the ADR. ADRs are **snapshots**: never edit
 
 When the interview converges and the user confirms shared understanding, present a concise summary and STOP. Do not invoke `/simp-to-spec`, write a spec, create tickets, or implement the requirement. Confirming shared understanding is not authorization to enter another stage, even if the original request listed later stages.
 
-You may suggest the next command without running it. If a durable PRD would help, explain why and suggest `/simp-to-spec --docs`; otherwise suggest `/simp-to-spec`. The user must explicitly invoke the chosen command in a later message. When they do, continue in the **same unbroken context window**.
+You may suggest `/simp-to-spec` as the next command without running it. The user must explicitly invoke it in a later message. When they do, continue in the **same unbroken context window**. Every invocation persists a local PRD; there is no separate persistence flag.
 
 If you realize you have crossed this boundary, stop immediately, disclose what was produced, and leave it in place. Do not delete it or continue the later stage; wait for the user's instruction.

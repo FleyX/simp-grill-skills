@@ -29,10 +29,11 @@ Before going further, confirm the fixed point resolves (`git rev-parse <fixed-po
 
 Look for the originating spec, in this order:
 
-1. A path the user passed as an argument.
-2. A PRD under `docs/prd/` matching the branch name or feature — use the index at `docs/prd/README.md` to find it.
-3. Ticket files under `.scratch/*/issues/` matching the work.
-4. If nothing is found, ask the user where the spec is. If there isn't one, the **Spec** sub-agent skips and reports "no spec available".
+1. A PRD or spec path the user passed as an argument.
+2. Ticket files under `.scratch/*/issues/` matching the work; follow their PRD reference and read that PRD.
+3. If nothing is found, ask the user where the spec is. If there isn't one, the **Spec** sub-agent skips and reports "no spec available".
+
+Do not use historical PRDs to fill gaps or determine current behaviour.
 
 ### 3. Identify the standards sources
 
