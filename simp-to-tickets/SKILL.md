@@ -78,6 +78,6 @@ Apart from the required PRD reference, avoid specific file paths or code snippet
 
 Present the published tickets and STOP. Do not invoke `/simp-implement` or `/simp-implement-tdd`, even if the user approved the breakdown or originally requested implementation. Approval publishes the tickets; it does not authorize development.
 
-You may explain that the user can explicitly invoke `/simp-implement` for one eligible ticket in a fresh context. Each ticket requires a separate invocation.
+You may explain that the user can explicitly invoke `/simp-implement` for one eligible ticket in a fresh context, or use `/simp-implement --all` to implement the feature's tickets sequentially. The TDD variant supports the same `--all` behaviour.
 
 If you realize you have crossed this boundary, stop immediately, disclose what was produced, and leave it in place. Do not delete it or continue implementation; wait for the user's instruction.

@@ -1,16 +1,24 @@
 ---
 name: simp-implement-tdd
-description: "Implement one ticket test-first: primary model writes a dev doc, a secondary tester/implementer pair builds it red→green at pre-agreed seams, primary reviews, then the ticket is closed. TDD variant of simp-implement."
+description: "Implement one ticket test-first, or all tickets in a feature with --all: primary writes dev docs, secondary tester/implementer pairs build red→green, primary reviews, then tickets are closed. TDD variant of simp-implement."
 disable-model-invocation: true
 ---
 
 # Simp Implement
 
-Implement one ticket via a **primary → secondary pair → primary** pipeline. The primary model (you) does the two quality-sensitive ends — planning and review. The secondary models do the token-heavy middle — reading code, writing tests, implementing, running tests.
+Implement tickets via a **primary → secondary pair → primary** pipeline. The primary model (you) does the two quality-sensitive ends — planning and review. The secondary models do the token-heavy middle — reading code, writing tests, implementing, running tests.
 
 Tests come first. A **tester** secondary writes failing tests at the seams declared in the dev doc; an **implementer** secondary makes them green without ever touching the test files. The two roles never share an agent, so no model grades its own work.
 
 Tickets live at `.scratch/<feature-slug>/issues/<NN>-<slug>.md` (from `/simp-to-tickets`). Work the frontier: any ticket whose blockers are all resolved.
+
+## Arguments and ticket selection
+
+- **No `--all`** → implement one eligible ticket, then stop.
+- **`--all`** → explicit authorization to implement every ticket in the starting ticket's feature. Do not cross into another feature or invoke another skill.
+- Start with the user's specified ticket, or the lowest-numbered eligible ticket when none is specified. A specified ticket must be eligible; otherwise stop and report its blockers.
+- Execute tickets sequentially. After each commit, choose the lowest-numbered eligible unresolved ticket; never implement tickets in parallel.
+- Any failure, unresolved review finding, commit problem, or question requiring user judgement stops the entire batch. Do not skip the problem and continue with another ticket.
 
 ## Process
 
@@ -109,9 +117,15 @@ Only after the commit lands:
 - In the ticket file, check every acceptance-criterion checkbox and change the `Status:` line to `resolved`.
 - Never delete the ticket file during the feature. Tickets and dev docs are disposable once the feature is done; keep the PRD.
 
-### 5. Stop at the stage boundary
+### 5. Advance or stop
 
-Report the committed ticket and STOP. Do not select or implement another ticket, invoke `/simp-code-review`, or invoke any other skill. A resolved ticket or remaining unblocked tickets are not authorization to continue; the user must explicitly request each next action.
+- **Without `--all`** → report the committed ticket and STOP. Remaining unblocked tickets are not authorization to continue.
+- **With `--all`** → recompute the current feature's frontier after closing the ticket:
+  1. If an eligible unresolved ticket exists, select the lowest-numbered one and return to step 1 with FRESH tester and implementer agents. Agent reuse is allowed only across slices within one ticket, never across tickets.
+  2. If unresolved tickets remain but none are eligible, STOP and report the blocking dependency or status problem.
+  3. If every ticket in the feature is resolved, report each completed ticket and its commit, then STOP.
+
+Never invoke `/simp-code-review` or any other skill. `--all` authorizes only sequential implementation within the current feature.
 
 If you realize you have crossed this boundary, stop immediately, disclose what was produced, and leave it in place. Do not delete it or continue the later work; wait for the user's instruction.
 

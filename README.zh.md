@@ -47,12 +47,13 @@ and dev doc first, make the required changes, and run the relevant checks.
 /simp-to-spec          将对话综合为 spec
                        (始终在 .scratch/ 下落盘快照 PRD)
 /simp-to-tickets       将 PRD 拆分为 tracer-bullet tickets,存放于 .scratch/
-/simp-implement        每个 ticket:primary 规划 → secondary 实现 → primary 审查
-/simp-implement-tdd    TDD 变体:secondary tester/implementer 对测试先行开发
+/simp-implement [--all] 每个 ticket:primary 规划 → secondary 实现 → primary 审查
+                       (--all 按依赖串行完成 feature 的全部 tickets)
+/simp-implement-tdd [--all] TDD 变体:secondary tester/implementer 对测试先行开发
 /simp-code-review      独立的双轴审查,仅手动调用
 ```
 
-`simp-grill` → `simp-to-spec` 要由用户在**同一个不中断的上下文窗口**内分别手动调用——spec 建立在访谈的思考之上。`simp-to-tickets` 需单独手动调用,可以在同一窗口,也可以在新会话中显式传入 PRD 路径。各 skill 不会自动串联。每个 `/simp-implement` 在全新的上下文中运行,一次一个 ticket,完成后停止。
+`simp-grill` → `simp-to-spec` 要由用户在**同一个不中断的上下文窗口**内分别手动调用——spec 建立在访谈的思考之上。`simp-to-tickets` 需单独手动调用,可以在同一窗口,也可以在新会话中显式传入 PRD 路径。各 skill 不会自动串联。每次实现调用都在全新上下文中运行,默认只完成一个 ticket;使用 `--all` 时按依赖串行完成 feature 的全部 tickets,然后停止。
 
 ## 文档地图
 
@@ -68,6 +69,7 @@ and dev doc first, make the required changes, and run the relevant checks.
 
 - **每次生成 spec 都会落盘。** `/simp-to-spec` 始终写入本地 PRD,不再有 `--docs` 选项,也不需要判断大改小改。
 - **所有阶段都设闸门。** 每个 skill 完成自身职责后停止,可以提示下一步命令,但不得调用下一阶段。确认当前产物、回复“继续”或在最初请求中列出完整流程,都不构成跨阶段授权;用户必须在看到当前产物后明确调用下一个 skill。
+- **批量实现必须显式授权。** `--all` 授权两个实现 skill 按依赖顺序完成同一 feature 的全部 tickets,每个 ticket 使用 fresh secondary 并单独提交;任何失败或需要用户判断的问题都会停止批次,不授权其他 feature 或 skill。
 - **允许独立入口。** 输入充分时可直接调用后续 skill;在新会话独立调用 `simp-to-tickets` 时必须显式传入 PRD 路径。输入不足时停止并说明缺什么,不自动补跑前序阶段。
 - **PRD 在本地长期保留。** 只用于本机追溯,不通过 git 共享;清理 `.scratch/` 时仍要保留 PRD。
 - **越界后立即停止。** 说明已经产生了什么并保留现场,不自动删除或继续后续工作,等待用户指示。

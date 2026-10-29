@@ -52,12 +52,13 @@ and dev doc first, make the required changes, and run the relevant checks.
 /simp-to-spec          synthesise the conversation into a spec
                        (always persists a snapshot PRD under .scratch/)
 /simp-to-tickets       split the PRD into tracer-bullet tickets under .scratch/
-/simp-implement        per ticket: primary plans → secondary implements → primary reviews
-/simp-implement-tdd    TDD variant: secondary tester/implementer pair builds test-first
+/simp-implement [--all] per ticket: primary plans → secondary implements → primary reviews
+                       (--all implements the feature's tickets sequentially)
+/simp-implement-tdd [--all] TDD variant: secondary tester/implementer pair builds test-first
 /simp-code-review      standalone two-axis review, invoked manually only
 ```
 
-Invoke `simp-grill` → `simp-to-spec` manually in **one unbroken context window** — the spec builds on the interview. Invoke `simp-to-tickets` separately in the same window or in a fresh one with an explicit PRD path. No skill invokes the next automatically. Each `/simp-implement` runs in a fresh context, implements one ticket, then stops.
+Invoke `simp-grill` → `simp-to-spec` manually in **one unbroken context window** — the spec builds on the interview. Invoke `simp-to-tickets` separately in the same window or in a fresh one with an explicit PRD path. No skill invokes the next automatically. Each implementation invocation runs in a fresh context. By default it implements one ticket; with `--all`, it implements the feature's tickets sequentially, then stops.
 
 ## Document map
 
@@ -73,6 +74,7 @@ Invoke `simp-grill` → `simp-to-spec` manually in **one unbroken context window
 
 - **Every spec is persisted.** `/simp-to-spec` always writes a local PRD; there is no `--docs` option or big-vs-small persistence decision.
 - **Every stage has a gate.** Each skill completes its own work and stops. It may suggest the next command but must not invoke it. Approving the current output, saying “continue”, or listing the full pipeline in the original request does not authorize another stage; after seeing the current output, the user must explicitly invoke the next skill.
+- **Batch implementation is explicit.** `--all` authorizes both implementation skills to finish one feature's tickets in dependency order, with a fresh secondary and a separate commit per ticket. Any failure or question stops the batch; it never authorizes another feature or skill.
 - **Independent entry is allowed.** Invoke a later skill directly when its input is sufficient. A fresh-context `simp-to-tickets` invocation needs an explicit PRD path. If input is missing, stop and report what is needed instead of automatically running earlier stages.
 - **PRDs are local and long-term.** They support traceability on this machine but are not shared through git. Keep them when cleaning up `.scratch/`.
 - **Boundary violations stop immediately.** Disclose what was produced and leave it in place; do not delete it or continue later work. Wait for the user's instruction.
